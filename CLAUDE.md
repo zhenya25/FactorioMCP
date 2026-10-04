@@ -36,4 +36,4 @@ Fork of `sbarisic/FactorioMCP`: a C# (.NET 9) MCP server that drives a running F
 - Books live in `blueprint-books/<architecture>/`; the repository copy is the original. First architecture: `city-block-96x96` (root label `SpaceAge City Block 96x96`); its design rules are in `RULES.md` there.
 - Done: book structure with 14 stage books, `04-grid/intersection` and `04-grid/block-frame`, both verified in the sandbox.
 - Next: train stations inside a block (loading/unloading) and a live-train test of the grid, then fillings stage by stage (books 1-3 first so a new map can start).
-- `.claude/` and `blueprint-books/` are untracked; commit only when asked.
+- Commit and push only when asked; pushes go to `fork` `master`.
