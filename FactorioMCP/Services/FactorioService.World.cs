@@ -248,7 +248,10 @@ internal sealed partial class FactorioService
             local pos = player.position
             local surface = player.surface
             local filter = "{{entityType}}"
-            local entities = surface.find_entities_filtered{name=filter, position=pos, radius={{radius}}}
+            local entities = {}
+            if prototypes.entity[filter] then
+                entities = surface.find_entities_filtered{name=filter, position=pos, radius={{radius}}}
+            end
             if #entities == 0 then
                 entities = surface.find_entities_filtered{type=filter, position=pos, radius={{radius}}}
             end
@@ -294,7 +297,7 @@ internal sealed partial class FactorioService
             local player = game.connected_players[1]
             local pos = player.position
             local surface = player.surface
-            local resources = surface.find_entities_filtered{name="{{resourceName}}", position=pos, radius={{radius}}, type="resource"}
+            local resources = prototypes.entity["{{resourceName}}"] and surface.find_entities_filtered{name="{{resourceName}}", position=pos, radius={{radius}}, type="resource"} or {}
             if #resources == 0 then
                 rcon.print('{"success":false,"error":"not_found","resource":"{{resourceName}}","radius":{{radius}}}')
                 return
@@ -616,10 +619,10 @@ internal sealed partial class FactorioService
             local containers = {}
             local inv_types = {
                 {defines.inventory.chest, "chest"},
-                {defines.inventory.furnace_source, "furnace_source"},
-                {defines.inventory.furnace_result, "furnace_result"},
-                {defines.inventory.assembling_machine_input, "assembling_machine_input"},
-                {defines.inventory.assembling_machine_output, "assembling_machine_output"}
+                {defines.inventory.crafter_input, "furnace_source"},
+                {defines.inventory.crafter_output, "furnace_result"},
+                {defines.inventory.crafter_input, "assembling_machine_input"},
+                {defines.inventory.crafter_output, "assembling_machine_output"}
             }
             local entities = player.surface.find_entities_filtered{
                 position=player.position, radius={{radius}}
@@ -714,10 +717,11 @@ internal sealed partial class FactorioService
             parts[#parts+1] = '"entity":"'..esc(name)..'"'
             parts[#parts+1] = '"tile_width":'..tw
             parts[#parts+1] = '"tile_height":'..th
-            parts[#parts+1] = '"max_health":'..(proto.max_health or 0)
+            parts[#parts+1] = '"max_health":'..(proto.get_max_health() or 0)
             parts[#parts+1] = '"type":"'..esc(proto.type)..'"'
-            if proto.get_crafting_speed then
-                parts[#parts+1] = '"crafting_speed":'..proto.get_crafting_speed()
+            local ok_cs, cs = pcall(function() return proto.get_crafting_speed() end)
+            if ok_cs and cs then
+                parts[#parts+1] = '"crafting_speed":'..cs
             end
             if proto.mining_speed then
                 parts[#parts+1] = '"mining_speed":'..proto.mining_speed

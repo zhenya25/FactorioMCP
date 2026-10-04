@@ -181,7 +181,15 @@ internal sealed class EnergyService(RconClient rcon)
                         networks[nid].producers = {}
                     end
                     local nb = {}
-                    for _, n in pairs(pole.neighbours.copper) do
+                    local copper = {}
+                    local ok_conn, connector = pcall(function() return pole.get_wire_connector(defines.wire_connector_id.pole_copper, false) end)
+                    if ok_conn and connector then
+                        for _, c in pairs(connector.connections) do
+                            local owner = c.target and c.target.owner
+                            if owner and owner.valid and owner.type == "electric-pole" then copper[#copper+1] = owner end
+                        end
+                    end
+                    for _, n in pairs(copper) do
                         if n.electric_network_id == nid then
                             nb[#nb+1] = '{"name":"'..esc(n.name)..'","x":'..string.format("%.1f",n.position.x)..',"y":'..string.format("%.1f",n.position.y)..'}'
                         end

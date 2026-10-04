@@ -100,7 +100,7 @@ internal sealed partial class FactorioService
             local missing = {}
             -- Check fuel
             local fuel_inv = e.get_inventory(defines.inventory.fuel)
-            if fuel_inv and #fuel_inv > 0 then
+            if e.burner and fuel_inv and #fuel_inv > 0 then
                 local has_fuel = false
                 for i = 1, #fuel_inv do
                     local s = fuel_inv[i]
@@ -111,8 +111,8 @@ internal sealed partial class FactorioService
                 end
             end
             -- Check furnace source
-            local src_inv = e.get_inventory(defines.inventory.furnace_source)
-            if src_inv and #src_inv > 0 then
+            local src_inv = e.get_inventory(defines.inventory.crafter_input)
+            if e.type == "furnace" and src_inv and #src_inv > 0 then
                 local has_source = false
                 for i = 1, #src_inv do
                     local s = src_inv[i]
@@ -123,9 +123,9 @@ internal sealed partial class FactorioService
                 end
             end
             -- Check assembler inputs against recipe
-            local recipe = e.get_recipe()
-            if recipe then
-                local input_inv = e.get_inventory(defines.inventory.assembling_machine_input)
+            local ok_recipe, recipe = pcall(function() return e.get_recipe() end)
+            if ok_recipe and recipe then
+                local input_inv = e.get_inventory(defines.inventory.crafter_input)
                 if input_inv then
                     for _, ingredient in pairs(recipe.ingredients) do
                         local have = input_inv.get_item_count(ingredient.name)
@@ -136,7 +136,7 @@ internal sealed partial class FactorioService
                 end
             end
             -- Check output full
-            local out_inv = e.get_inventory(defines.inventory.furnace_result) or e.get_inventory(defines.inventory.assembling_machine_output)
+            local out_inv = e.get_inventory(defines.inventory.crafter_output) or e.get_inventory(defines.inventory.crafter_output)
             if out_inv then
                 local all_full = true
                 for i = 1, #out_inv do

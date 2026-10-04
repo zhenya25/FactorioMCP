@@ -75,8 +75,11 @@ internal sealed partial class FactorioService
                 rcon.print('{"success":false,"error":"already_researched","technology":"{{technology}}"}')
                 return
             end
-            local ok, err = pcall(function() force.add_research(tech) end)
-            if ok then
+            local added = nil
+            local ok, err = pcall(function() added = force.add_research(tech) end)
+            if ok and added == false then
+                rcon.print('{"success":false,"error":"research_not_queued","technology":"{{technology}}","detail":"prerequisites not researched or research queue is full"}')
+            elseif ok then
                 local ings = {}
                 for _, ing in pairs(tech.research_unit_ingredients) do
                     ings[#ings+1] = '{"name":"'..esc(ing.name)..'","count":'..ing.amount..'}'
@@ -116,7 +119,7 @@ internal sealed partial class FactorioService
                 local prob = p.probability or 1
                 prods[#prods+1] = '{"type":"'..esc(p.type)..'","name":"'..esc(p.name)..'","amount":'..amt..',"probability":'..prob..'}'
             end
-            rcon.print('{"success":true,"name":"'..esc(recipe.name)..'","enabled":'..tostring(recipe.enabled)..',"energy":'..recipe.energy..',"category":"'..esc(recipe.category)..'","ingredients":['..table.concat(ings, ",")..'],"products":['..table.concat(prods, ",")..']}')
+            rcon.print('{"success":true,"name":"'..esc(recipe.name)..'","enabled":'..tostring(recipe.enabled)..',"energy":'..recipe.energy..',"category":"'..esc(recipe.categories[1])..'","ingredients":['..table.concat(ings, ",")..'],"products":['..table.concat(prods, ",")..']}')
             """;
 
         return rcon.ExecuteLuaAsync(lua, cancellationToken);
@@ -134,7 +137,7 @@ internal sealed partial class FactorioService
             local parts = {}
             for name, recipe in pairs(force.recipes) do
                 if recipe.enabled then
-                    parts[#parts+1] = '{"name":"'..esc(name)..'","category":"'..esc(recipe.category)..'","energy":'..recipe.energy..'}'
+                    parts[#parts+1] = '{"name":"'..esc(name)..'","category":"'..esc(recipe.categories[1])..'","energy":'..recipe.energy..'}'
                 end
             end
             rcon.print('{"recipes":['..table.concat(parts, ",")..'],"count":'..#parts..'}')

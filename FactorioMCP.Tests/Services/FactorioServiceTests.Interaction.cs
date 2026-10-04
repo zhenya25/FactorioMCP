@@ -67,6 +67,6 @@ public partial class FactorioServiceTests
         Assert.Contains("20", removeCmd);
         Assert.Contains("inv.remove", removeCmd);
         Assert.Contains("player.insert", removeCmd);
-        Assert.Contains("defines.inventory.furnace_result", removeCmd);
+        Assert.Contains("defines.inventory.crafter_output", removeCmd);
     }
 }

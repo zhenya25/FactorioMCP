@@ -213,11 +213,11 @@ internal sealed partial class FactorioService
             -- Map inventory type string to defines
             local inv_map = {
                 fuel = defines.inventory.fuel,
-                furnace_source = defines.inventory.furnace_source,
-                furnace_result = defines.inventory.furnace_result,
+                furnace_source = defines.inventory.crafter_input,
+                furnace_result = defines.inventory.crafter_output,
                 chest = defines.inventory.chest,
-                assembling_machine_input = defines.inventory.assembling_machine_input,
-                assembling_machine_output = defines.inventory.assembling_machine_output
+                assembling_machine_input = defines.inventory.crafter_input,
+                assembling_machine_output = defines.inventory.crafter_output
             }
             local inv_type = inv_map["{{inventoryType}}"]
             if not inv_type then
@@ -280,11 +280,11 @@ internal sealed partial class FactorioService
             end
             local inv_map = {
                 fuel = defines.inventory.fuel,
-                furnace_source = defines.inventory.furnace_source,
-                furnace_result = defines.inventory.furnace_result,
+                furnace_source = defines.inventory.crafter_input,
+                furnace_result = defines.inventory.crafter_output,
                 chest = defines.inventory.chest,
-                assembling_machine_input = defines.inventory.assembling_machine_input,
-                assembling_machine_output = defines.inventory.assembling_machine_output
+                assembling_machine_input = defines.inventory.crafter_input,
+                assembling_machine_output = defines.inventory.crafter_output
             }
             local inv_type = inv_map["{{inventoryType}}"]
             if not inv_type then
@@ -368,11 +368,21 @@ internal sealed partial class FactorioService
                 result = result..',"recipe":"'..esc(recipe.name)..'"'
             end
             -- Inventories
-            local inv_names = {"fuel", "furnace_source", "furnace_result", "chest", "assembling_machine_input", "assembling_machine_output"}
-            local inv_defines = {defines.inventory.fuel, defines.inventory.furnace_source, defines.inventory.furnace_result, defines.inventory.chest, defines.inventory.assembling_machine_input, defines.inventory.assembling_machine_output}
+            local inv_names = {"fuel", "furnace_source", "furnace_result", "chest", "assembling_machine_input", "assembling_machine_output", "lab_input", "turret_ammo"}
+            local inv_defines = {defines.inventory.fuel, defines.inventory.crafter_input, defines.inventory.crafter_output, defines.inventory.chest, defines.inventory.crafter_input, defines.inventory.crafter_output, defines.inventory.lab_input, defines.inventory.turret_ammo}
+            local container_types = {["container"]=true, ["logistic-container"]=true, ["linked-container"]=true, ["infinity-container"]=true, ["cargo-wagon"]=true, ["car"]=true, ["spider-vehicle"]=true}
+            local function inv_applies(n)
+                if n == "fuel" then return e.burner ~= nil end
+                if n == "furnace_source" or n == "furnace_result" then return e.type == "furnace" end
+                if n == "assembling_machine_input" or n == "assembling_machine_output" then return e.type == "assembling-machine" or e.type == "rocket-silo" end
+                if n == "chest" then return container_types[e.type] == true end
+                if n == "lab_input" then return e.type == "lab" end
+                if n == "turret_ammo" then return e.type == "ammo-turret" end
+                return true
+            end
             local inv_parts = {}
             for i, inv_name in pairs(inv_names) do
-                local inv = e.get_inventory(inv_defines[i])
+                local inv = inv_applies(inv_name) and e.get_inventory(inv_defines[i]) or nil
                 if inv then
                     local contents = inv.get_contents()
                     local items = {}
@@ -464,14 +474,21 @@ internal sealed partial class FactorioService
 
         var lua = string.Create(CultureInfo.InvariantCulture, $$"""
             {{LuaJsonEscape}}
+            {{LuaEntitySort}}
             local player = game.connected_players[1]
             local entities = player.surface.find_entities_filtered{position={{{x}},{{y}}}, radius=1}
             if #entities == 0 then
                 rcon.print('{"success":false,"error":"no_entity","x":{{x}},"y":{{y}}}')
                 return
             end
+            sort_entities(entities, {{x}}, {{y}})
             local e = entities[1]
-            local inv = e.get_inventory(defines.inventory.{{inventoryType}})
+            for _, ent in pairs(entities) do
+                if ent.type ~= "resource" then e = ent break end
+            end
+            local inv_alias = {furnace_source="crafter_input", furnace_result="crafter_output", assembling_machine_input="crafter_input", assembling_machine_output="crafter_output"}
+            local inv_id = defines.inventory[inv_alias["{{inventoryType}}"] or "{{inventoryType}}"]
+            local inv = inv_id and e.get_inventory(inv_id)
             if not inv then
                 rcon.print('{"success":false,"error":"no_inventory","entity":"'..esc(e.name)..'","inventory_type":"{{inventoryType}}"}')
                 return
@@ -516,14 +533,21 @@ internal sealed partial class FactorioService
 
         var lua = string.Create(CultureInfo.InvariantCulture, $$"""
             {{LuaJsonEscape}}
+            {{LuaEntitySort}}
             local player = game.connected_players[1]
             local entities = player.surface.find_entities_filtered{position={{{x}},{{y}}}, radius=1}
             if #entities == 0 then
                 rcon.print('{"success":false,"error":"no_entity","x":{{x}},"y":{{y}}}')
                 return
             end
+            sort_entities(entities, {{x}}, {{y}})
             local e = entities[1]
-            local inv = e.get_inventory(defines.inventory.{{inventoryType}})
+            for _, ent in pairs(entities) do
+                if ent.type ~= "resource" then e = ent break end
+            end
+            local inv_alias = {furnace_source="crafter_input", furnace_result="crafter_output", assembling_machine_input="crafter_input", assembling_machine_output="crafter_output"}
+            local inv_id = defines.inventory[inv_alias["{{inventoryType}}"] or "{{inventoryType}}"]
+            local inv = inv_id and e.get_inventory(inv_id)
             if not inv then
                 rcon.print('{"success":false,"error":"no_inventory","entity":"'..esc(e.name)..'","inventory_type":"{{inventoryType}}"}')
                 return
@@ -660,9 +684,9 @@ internal sealed partial class FactorioService
                 inserter_y = math.floor(bb.left_top.y) - 0.5
             elseif side == "south" then
                 inserter_x = math.floor(cx) + 0.5
-                inserter_y = math.floor(bb.right_bottom.y) + 0.5
+                inserter_y = math.ceil(bb.right_bottom.y) + 0.5
             elseif side == "east" then
-                inserter_x = math.floor(bb.right_bottom.x) + 0.5
+                inserter_x = math.ceil(bb.right_bottom.x) + 0.5
                 inserter_y = math.floor(cy) + 0.5
             elseif side == "west" then
                 inserter_x = math.floor(bb.left_top.x) - 0.5

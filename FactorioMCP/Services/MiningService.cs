@@ -36,8 +36,8 @@ internal sealed class MiningService(RconClient rcon)
             local dx = tx - player_pos.x
             local dy = ty - player_pos.y
             local distance = math.sqrt(dx*dx + dy*dy)
-            if distance > player.reach_distance then
-                rcon.print('{"success":false,"error":"out_of_range","distance":'..string.format("%.1f", distance)..',"limit":'..player.reach_distance..'}')
+            if distance > player.resource_reach_distance then
+                rcon.print('{"success":false,"error":"out_of_range","distance":'..string.format("%.1f", distance)..',"limit":'..player.resource_reach_distance..'}')
                 return
             end
             local pos = {tx, ty}

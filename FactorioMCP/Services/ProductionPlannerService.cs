@@ -120,7 +120,7 @@ internal sealed class ProductionPlannerService(RconClient rcon)
                 end
                 visited[item_name] = true
                 local energy = recipe.energy
-                local cat = recipe.category
+                local cat = recipe.categories[1]
                 local machine_name = get_machine(cat)
                 local speed = get_speed(machine_name)
                 local eff_time = energy / speed
@@ -160,7 +160,7 @@ internal sealed class ProductionPlannerService(RconClient rcon)
                 local ore_name = item
                 if item == "iron-plate" then ore_name = "iron-ore" end
                 if item == "copper-plate" then ore_name = "copper-ore" end
-                local resources = surface.find_entities_filtered{name=ore_name, position=ppos, radius=200, limit=1}
+                local resources = prototypes.entity[ore_name] and surface.find_entities_filtered{name=ore_name, position=ppos, radius=200, limit=1} or {}
                 if #resources > 0 then
                     local res = resources[1]
                     patch_info = '{"resource":"'..esc(ore_name)..'","x":'..string.format("%.1f", res.position.x)..',"y":'..string.format("%.1f", res.position.y)..'}'
