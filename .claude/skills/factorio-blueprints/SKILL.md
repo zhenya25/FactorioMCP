@@ -36,7 +36,7 @@ blueprint-books/<architecture>/
 3. Capture: `capture_blueprint(x1, y1, x2, y2, label, description, 'mcp/<name>.json')`.
 4. `factorio.ps1 fetch mcp/<name>.json <architecture>/blueprints/<NN-stage>/<name>.json`
 5. Add the file to `book.json` under the right book; a new category needs a new book with a description.
-6. `factorio.ps1 give <architecture>` - rebuilds the book, validates it by importing it in game, replaces the player's copy. Fix every reported problem.
+6. `factorio.ps1 add <architecture> <sub-book label part> blueprints/...json` lists it in `book.json`. Then `factorio.ps1 give <architecture>` - rebuilds the book, validates it by importing it in game, replaces the player's copy. Fix every reported problem.
 7. Tell the user what was added, where it sits in the book, and what was and was not verified.
 
 ## Tools
@@ -62,8 +62,14 @@ Put task-specific Lua in a scratch file and list libraries before it, e.g. `lua 
 |---|---|
 | `common.lua` | `p`, `s`, `f`, `clear(pos, r)`, `clear_area`, `wipe(x1, y1, x2, y2)`, `player_inventory()` |
 | `rails.lua` | `T.start/step/run/straight_to` rail turtle, `signal`, `P` grid geometry, `build_cell`, `add_cell_poles`, `can_route`, `path_test` |
-| `blueprint.lua` | `capture_blueprint` (snaps to the absolute 96 grid), `stamp_blueprint(str, x, y)` |
+| `blueprint.lua` | `capture_blueprint(x1, y1, x2, y2, label, desc, file, free)` (snaps to the 96 grid unless free), `make_tile_blueprint`, `stamp_blueprint(str, x, y, direction)` |
+| `layout.lua` | `build_layout(x0, y0, rows, legend, kinds)` text layouts, `canvas(w, h)`, `place`, test fixtures `source`, `sink`, `power`, `early_game_force()`, `test_start()`, `test_report(items, rect)` |
+| `stations.lua` | `build_unload(bx, by, x, name, threshold, to, exit)` (both wagon sides, full belt), `build_load(bx, by, x, name, threshold, side)` (1-to-4 balancer), `build_depot`, `shared_schedule(train)` |
+| `blocks.lua` | `build_simple_block`, `build_pair_block`: whole block fillings with stations (spines 33 in, 61 out, 77 second in), `stock_station` for tests |
+| `walls.lua` | `build_wall_straight(bx, by)` |
 
 Requires the game hosted through Multiplayer with RCON enabled and the server built (`dotnet build FactorioMCP -c Release`).
+
+Production designs are tested with `scripts/harness/runtest.sh <build.lua> "" <warmup s> <measure s>`: the build script lays the design out, adds endless sources and sinks, queues `job{...}`; the finish step prints rates, idle and unpowered machines, removes fixtures and captures. See `harness/job.lua` for `site`, `job`, `fx`, `watch`, `fit_check`. Clean the old test site first: production statistics are global.
 
 Read `references/api-notes.md` before writing new Lua: it lists the Factorio 2.1 API facts and pitfalls already found.

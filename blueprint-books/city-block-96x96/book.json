@@ -1,79 +1,193 @@
 {
-  "label": "SpaceAge City Block 96x96",
-  "description": "Город из квадратных блоков 96x96. Рельсы по границам блоков: два пути, движение правостороннее, поезда 1+4.\nПравила: чертежи привязаны к сетке 96x96; один блок - один продукт; книги по этапам; у каждой книги и чертежа есть описание; всё проверено в игре.",
-  "children": [
-    {
-      "label": "1. Старт",
-      "description": "До электричества: добыча на угле, каменные печи, первая паровая электростанция.",
-      "children": []
-    },
-    {
-      "label": "2. Красная и зелёная наука",
-      "description": "База до поездов: плавка, красные и зелёные банки, лаборатории, мини-молл.",
-      "children": []
-    },
-    {
-      "label": "3. Нефть и синяя наука",
-      "description": "Нефтепереработка, пластик, сера, сталь, красные схемы и синие банки. Последний этап без блоков.",
-      "children": []
-    },
-    {
-      "label": "4. Рельсовая сетка",
-      "description": "Каркас города: перекрёстки с магистральной ЛЭП, каркас блока со станциями дронов, станции поездов. Ставится раньше начинок.",
-      "children": [
-        { "file": "blueprints/04-grid/intersection.json" },
-        { "file": "blueprints/04-grid/block-frame.json" }
-      ]
-    },
-    {
-      "label": "5. Блоки: сырьё",
-      "description": "Добыча и плавка. Каждый блок вывозит один продукт поездом.",
-      "children": []
-    },
-    {
-      "label": "6. Блоки: промежуточные",
-      "description": "Шестерни, схемы, пластик, сера, батареи, двигатели, модули. Один блок - один продукт.",
-      "children": []
-    },
-    {
-      "label": "7. Блоки: наука",
-      "description": "По блоку на каждый вид банок и блок лабораторий.",
-      "children": []
-    },
-    {
-      "label": "8. Энергия и роботы",
-      "description": "Солнечные поля, ядерная станция, сетка робопортов, молл на роботах.",
-      "children": []
-    },
-    {
-      "label": "9. Оборона",
-      "description": "Сегменты стены с турелями, лазерами и огнемётами по периметру блоков.",
-      "children": []
-    },
-    {
-      "label": "10. Ракета и платформы",
-      "description": "Ракетная шахта и космические платформы: стартовая и грузовая.",
-      "children": []
-    },
-    {
-      "label": "11. Вулканус",
-      "description": "Литейные, металл из лавы, местная наука.",
-      "children": []
-    },
-    {
-      "label": "12. Фульгора",
-      "description": "Переработка лома и сортировка на островах, местная наука. Без городских блоков.",
-      "children": []
-    },
-    {
-      "label": "13. Глеба",
-      "description": "Фермы и биокамеры с учётом порчи продуктов, местная наука.",
-      "children": []
-    },
-    {
-      "label": "14. Аквило",
-      "description": "Обогрев, аммиак, местная наука.",
-      "children": []
-    }
-  ]
+    "label":  "SpaceAge City Block 96x96",
+    "description":  "Город из квадратных блоков 96x96. Рельсы по границам блоков: два пути, движение правостороннее, поезда 1+4.\nПравила: чертежи привязаны к сетке 96x96; один блок - один продукт; книги по этапам; у каждой книги и чертежа есть описание; всё проверено в игре.",
+    "children":  [
+                     {
+                         "label":  "0. Основа блока",
+                         "description":  "Подготовка места под блок: засыпка воды, покрытие, станции дронов. Ставится до начинок.",
+                         "children":  [
+                                          {
+                                              "file":  "blueprints/00-base/landfill-block.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/00-base/block-frame.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/00-base/paved-block.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/00-base/paved-road.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/00-base/paved-road-and-block.json"
+                                          }
+                                      ]
+                     },
+                     {
+                         "label":  "1. Старт",
+                         "description":  "До электричества: добыча на угле, каменные печи, первая паровая электростанция.",
+                         "children":  [
+                                          {
+                                              "file":  "blueprints/01-start/furnace-line.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/01-start/electric-mining.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/01-start/steam-power.json"
+                                          }
+                                      ]
+                     },
+                     {
+                         "label":  "2. Красная и зелёная наука",
+                         "description":  "База до поездов: плавка, красные и зелёные банки, лаборатории, мини-молл.",
+                         "children":  [
+                                          {
+                                              "file":  "blueprints/02-science/red-science.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/02-science/green-science.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/02-science/labs.json"
+                                          }
+                                      ]
+                     },
+                     {
+                         "label":  "3. Нефть и синяя наука",
+                         "description":  "Нефтепереработка, пластик, сера, сталь, красные схемы и синие банки. Последний этап без блоков.",
+                         "children":  [
+
+                                      ]
+                     },
+                     {
+                         "label":  "4. Рельсовая сетка",
+                         "description":  "Рельсы города: перекрёсток и ячейки для края (Т-образный, угол, прямой) с магистральной ЛЭП, станции поездов.",
+                         "children":  [
+                                          {
+                                              "file":  "blueprints/04-grid/intersection.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/04-grid/t-junction.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/04-grid/corner.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/04-grid/straight.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/04-grid/station-load.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/04-grid/station-unload.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/04-grid/depot.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/04-grid/depot-with-train.json"
+                                          }
+                                      ]
+                     },
+                     {
+                         "label":  "5. Блоки: сырьё",
+                         "description":  "Добыча и плавка. Каждый блок вывозит один продукт поездом.",
+                         "children":  [
+                                          {
+                                              "file":  "blueprints/05-raw/smelt-iron.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/05-raw/smelt-copper.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/05-raw/smelt-brick.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/05-raw/smelt-steel.json"
+                                          }
+                                      ]
+                     },
+                     {
+                         "label":  "6. Блоки: промежуточные",
+                         "description":  "Шестерни, схемы, пластик, сера, батареи, двигатели, модули. Один блок - один продукт.",
+                         "children":  [
+                                          {
+                                              "file":  "blueprints/06-intermediate/gears.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/06-intermediate/green-circuits.json"
+                                          }
+                                      ]
+                     },
+                     {
+                         "label":  "7. Блоки: наука",
+                         "description":  "По блоку на каждый вид банок и блок лабораторий.",
+                         "children":  [
+                                          {
+                                              "file":  "blueprints/07-science/science-red.json"
+                                          }
+                                      ]
+                     },
+                     {
+                         "label":  "8. Энергия и роботы",
+                         "description":  "Солнечные поля, ядерная станция, сетка робопортов, молл на роботах.",
+                         "children":  [
+
+                                      ]
+                     },
+                     {
+                         "label":  "9. Оборона",
+                         "description":  "Сегменты стены с турелями, лазерами и огнемётами по периметру блоков.",
+                         "children":  [
+                                          {
+                                              "file":  "blueprints/09-defence/wall-straight.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/09-defence/wall-corner.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/09-defence/wall-entrance.json"
+                                          },
+                                          {
+                                              "file":  "blueprints/09-defence/wall-supply-post.json"
+                                          }
+                                      ]
+                     },
+                     {
+                         "label":  "10. Ракета и платформы",
+                         "description":  "Ракетная шахта и космические платформы: стартовая и грузовая.",
+                         "children":  [
+
+                                      ]
+                     },
+                     {
+                         "label":  "11. Вулканус",
+                         "description":  "Литейные, металл из лавы, местная наука.",
+                         "children":  [
+
+                                      ]
+                     },
+                     {
+                         "label":  "12. Фульгора",
+                         "description":  "Переработка лома и сортировка на островах, местная наука. Без городских блоков.",
+                         "children":  [
+
+                                      ]
+                     },
+                     {
+                         "label":  "13. Глеба",
+                         "description":  "Фермы и биокамеры с учётом порчи продуктов, местная наука.",
+                         "children":  [
+
+                                      ]
+                     },
+                     {
+                         "label":  "14. Аквило",
+                         "description":  "Обогрев, аммиак, местная наука.",
+                         "children":  [
+
+                                      ]
+                     }
+                 ]
 }

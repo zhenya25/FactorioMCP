@@ -32,8 +32,10 @@ Fork of `sbarisic/FactorioMCP`: a C# (.NET 9) MCP server that drives a running F
 
 ## Blueprint work
 
+- START HERE: `blueprint-books/city-block-96x96/memory.md` has the exact work status, the half-finished wall redesign and the user's open requests.
 - Skills: `factorio-blueprints` (design, verify, store), `give-blueprint-book` (deliver a book), and user-level `skill-authoring` (rules for writing skills).
 - Books live in `blueprint-books/<architecture>/`; the repository copy is the original. First architecture: `city-block-96x96` (root label `SpaceAge City Block 96x96`); its design rules are in `RULES.md` there.
-- Done: book structure with 14 stage books, `04-grid/intersection` and `04-grid/block-frame`, both verified in the sandbox.
-- Next: train stations inside a block (loading/unloading) and a live-train test of the grid, then fillings stage by stage (books 1-3 first so a new map can start).
+- The user asked (2026-10-05) to implement the book through stage 9. Done and verified in the sandbox (30 blueprints): book 0 base; book 1 (furnace line, electric mining, steam power); book 2 (red and green science 0.5/s, labs); book 4 (intersection, T, corner, straight, load/unload stations, depot, depot with a configured shared train); book 5 (smelting: iron, copper, brick, steel); book 6 (gears, green circuits); book 7 (red science); book 9 (straight wall, train entrance, corner with a 45-degree flamethrower, supply post).
+- Not done yet: book 3 (oil, plastic, sulfur, blue science was moved to blocks); mining outpost with a balanced loading station; fluid stations and tanker trains; more book 6 blocks (red and blue circuits, engines, batteries, LDS, modules); book 7 sciences 2-6 and a lab block; book 8 (solar, nuclear, robot mall); book 9 artillery add-on; upgrade planners for the base book; a mini-mall for book 2.
+- Sandbox test sites are tagged on the map; the Lua that built each design is kept in `blueprint-books/city-block-96x96/designs/` (run with the skill harness).
 - Commit and push only when asked; pushes go to `fork` `master`.

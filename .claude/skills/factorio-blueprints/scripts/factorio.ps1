@@ -5,6 +5,7 @@
 #   factorio.ps1 call <tool> [args.json | '{..}']  call any MCP tool of the server
 #   factorio.ps1 fetch <script-output file> <path under blueprint-books>   copy a file the game wrote
 #   factorio.ps1 list                               show the books (folder -> label)
+#   factorio.ps1 add <book> <sub-book> <file>       list a blueprint file in a sub-book of book.json
 #   factorio.ps1 assemble [book]                    rebuild a book from its files and validate it in the game
 #   factorio.ps1 give [book]                        assemble, then put the book into the player's inventory
 #   factorio.ps1 clipboard [book]                   copy the last built import string; never touches the game
@@ -190,6 +191,22 @@ try {
         }
         'list' {
             Get-Books | ForEach-Object { "$($_.Name)  ->  $($_.Label)" }
+        }
+        'add' {
+            # add <book> <part of a sub-book label> <file path under the book folder>
+            if ($Rest.Count -lt 3) { throw 'Usage: factorio.ps1 add <book> <sub-book label part> <blueprints/...json>' }
+            $book = Resolve-Book $Rest[0]
+            $path = Join-Path $book.Path 'book.json'
+            $tree = [IO.File]::ReadAllText($path, $utf8) | ConvertFrom-Json
+            $hits = @($tree.children | Where-Object { $_.label -like "*$($Rest[1])*" })
+            if ($hits.Count -ne 1) { throw "'$($Rest[1])' matches $($hits.Count) sub-books" }
+            $file = $Rest[2].Replace('\', '/')
+            if (-not (Test-Path (Join-Path $book.Path $file))) { throw "File not found in the book folder: $file" }
+            if (@($hits[0].children | Where-Object { $_.file -eq $file }).Count -eq 0) {
+                $hits[0].children = @($hits[0].children) + [pscustomobject]@{ file = $file }
+                [IO.File]::WriteAllText($path, (ConvertTo-Json $tree -Depth 30), $utf8)
+            }
+            "$($hits[0].label): $(@($hits[0].children).Count) blueprint(s)"
         }
         'assemble' {
             Build-Book (Resolve-Book ($Rest -join ' '))
